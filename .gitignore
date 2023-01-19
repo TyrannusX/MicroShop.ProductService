@@ -7,6 +7,10 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+bin/
+include/
+lib64
+*.db
 .Python
 build/
 develop-eggs/

@@ -1,0 +1,6 @@
+flask
+Authlib
+flask-cors
+sqlalchemy
+dependency-injector
+pika
