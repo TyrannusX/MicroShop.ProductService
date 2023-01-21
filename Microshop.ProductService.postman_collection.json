@@ -1,0 +1,57 @@
+{
+	"info": {
+		"_postman_id": "fd519269-6754-4545-abcf-899ed7dc95b8",
+		"name": "Microshop.ProductService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"sushi\",\n    \"price\": 8.89,\n    \"inventory\": 100,\n    \"category\": \"seafood\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/products/8c6c540c-cec2-49f3-b35c-914367d4d349",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"products",
+						"8c6c540c-cec2-49f3-b35c-914367d4d349"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -28,7 +28,7 @@ class CreateProductCommandHandler(BaseHandler):
         new_id = str(uuid4())
         product_to_create = Product(new_id, create_product_command.name, create_product_command.price, create_product_command.inventory, create_product_command.category)
         self.product_repository.create(product_to_create)
-        product_created = ProductCreated(product_to_create.name)
+        product_created = ProductCreated(product_to_create.id, product_to_create.name, product_to_create.price)
         self.mediator.send(product_created)
         self.logger.info("Finished create product command handler")
         return new_id
@@ -68,7 +68,8 @@ class GetProductsQueryHandler(BaseHandler):
         product: Product = self.product_repository.read(command.id)
         self.logger.info("Finished get products query handler")
         return product
-    
+
+#mediator
 class Mediator(BaseMediator):
     def handle(self, command):
         for handler in BaseHandler.__subclasses__():

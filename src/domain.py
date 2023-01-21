@@ -51,4 +51,6 @@ class Product:
 
 #domain events
 class ProductCreated(NamedTuple):
+    id: str
     name: str
+    price: float
