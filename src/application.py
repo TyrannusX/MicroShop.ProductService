@@ -19,7 +19,7 @@ class CreateProductCommandHandler(BaseHandler):
     def __init__(self, product_repository: BaseRepository = Provide[Container.product_repository]) -> None:
         self.product_repository = product_repository
         self.supported_commands = [CreateProductCommand]
-        self.mediator = Mediator()
+        self.events_to_emit = []
         self.logger = logging.getLogger("application")
         pass
     
@@ -29,7 +29,7 @@ class CreateProductCommandHandler(BaseHandler):
         product_to_create = Product(new_id, create_product_command.name, create_product_command.price, create_product_command.inventory, create_product_command.category)
         self.product_repository.create(product_to_create)
         product_created = ProductCreated(product_to_create.id, product_to_create.name, product_to_create.price)
-        self.mediator.send(product_created)
+        self.events_to_emit.append(product_created)
         self.logger.info("Finished create product command handler")
         return new_id
 
@@ -42,6 +42,7 @@ class ProductCreatedEventHandler(BaseHandler):
     @inject
     def __init__(self, event_bus: BaseEventBus = Provide[Container.event_bus]) -> None:
         self.supported_commands = [ProductCreated]
+        self.events_to_emit = []
         self.event_bus = event_bus
         self.logger = logging.getLogger("application")
     
@@ -61,6 +62,7 @@ class GetProductsQueryHandler(BaseHandler):
     def __init__(self, product_repository: BaseRepository = Provide[Container.product_repository]) -> None:
         self.product_repository = product_repository
         self.supported_commands = [GetProductsQuery]
+        self.events_to_emit = []
         self.logger = logging.getLogger("application")
         
     def handle(self, command: GetProductsQuery) -> Product:
@@ -75,7 +77,12 @@ class Mediator(BaseMediator):
         for handler in BaseHandler.__subclasses__():
             handler_instance = handler()
             if type(command) in handler_instance.supported_commands:
-                return handler_instance.handle(command)
+                result = handler_instance.handle(command)
+                if len(handler_instance.events_to_emit) > 0:
+                    for event in handler_instance.events_to_emit:
+                        self.send(event)
+                    handler_instance.events_to_emit.clear()
+                return result
             
     def send(self, domain_event):
         for handler in BaseHandler.__subclasses__():

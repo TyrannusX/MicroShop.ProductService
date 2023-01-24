@@ -9,6 +9,7 @@ class BaseEventBus(ABC):
 
 class BaseHandler(ABC):
     supported_commands: list
+    events_to_emit: list
     
     @abstractmethod
     def handle(self, command):
