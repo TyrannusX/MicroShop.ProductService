@@ -4,6 +4,7 @@ from domain import BaseRepository, BaseEventBus, Product
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
 from sqlalchemy import Column, Integer, Float, String, create_engine
 import json
+import config
 
 #ORM
 Base = declarative_base()
@@ -17,7 +18,7 @@ class PersistedProduct(Base):
     inventory = Column(Integer, nullable=False)
     category = Column(String, nullable=False)
 
-engine = create_engine("sqlite:///products.db", echo=True, future=True)
+engine = create_engine(config.DATABASE_URI, echo=True, future=True)
 session_maker = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 
@@ -55,7 +56,8 @@ class RabbitMqEventBus(BaseEventBus):
         
     def publish(self, integration_event):
         self.logger.info(f"Publishing integration event {type(integration_event)}")
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        self.logger.info(f"Message Broker URI: {config.MESSAGE_BROKER_URI}")
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=config.MESSAGE_BROKER_URI, port=5672))
         channel = connection.channel()
         channel.queue_declare(queue=str(type(integration_event).__name__))
         channel.basic_publish(exchange="", routing_key=str(type(integration_event).__name__), body=json.dumps(integration_event))
