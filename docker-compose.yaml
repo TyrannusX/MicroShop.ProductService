@@ -1,0 +1,72 @@
+version: '3.9'
+services:
+  product-service:
+    image: microshop-product-service:latest
+    container_name: "product-service"
+    hostname: "product-service"
+    restart: unless-stopped
+    networks:
+      - microshop-network
+    ports:
+      - "5000:5000"
+  rabbit-server:
+    image: rabbitmq:management
+    container_name: "rabbit-mq-server"
+    hostname: "my-rabbit"
+    restart: unless-stopped
+    networks:
+      - microshop-network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  db:
+    image: postgres
+    hostname: my-postgres
+    container_name: postgres-db-server
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microshop-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    networks:
+      - microshop-network
+    ports:
+      - 8083:8080
+  fusionauth:
+    image: fusionauth/fusionauth-app:latest
+    container_name: fusionauth-server
+    hostname: my-fusionauth
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: jdbc:postgresql://my-postgres:5432/fusionauth
+      DATABASE_ROOT_USERNAME: postgres
+      DATABASE_ROOT_PASSWORD: postgres
+      DATABASE_USERNAME: fusionauth
+      DATABASE_PASSWORD: fusionauth
+      FUSIONAUTH_APP_RUNTIME_MODE: development
+      FUSIONAUTH_APP_URL: http://my-fusionauth:9011
+    networks:
+      - microshop-network
+    ports:
+      - 9011:9011
+
+networks:
+  microshop-network:
+    driver: bridge
+
+volumes:
+  postgres-volume:
