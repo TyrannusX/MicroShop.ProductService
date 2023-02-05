@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "b3c3e355-4042-470e-b2f3-3cd0ee15c195",
+		"name": "Fusionauth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Token Exchange (Auth Code)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "default"
+						},
+						{
+							"key": "code",
+							"value": "x",
+							"type": "default"
+						},
+						{
+							"key": "code_verifier",
+							"value": "x",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:9011/oauth2/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9011",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Token Exchange (Password)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "default"
+						},
+						{
+							"key": "client_id",
+							"value": "e9bd45db-ccd9-4668-b1fe-c2629d5327c2",
+							"type": "default"
+						},
+						{
+							"key": "client_secret",
+							"value": "x",
+							"type": "default"
+						},
+						{
+							"key": "username",
+							"value": "neorob22@gmail.com",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "x",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:9011/oauth2/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9011",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImd0eSI6WyJwYXNzd29yZCJdLCJraWQiOiI0ZDU0NTYyMzYifQ.eyJhdWQiOiJlOWJkNDVkYi1jY2Q5LTQ2NjgtYjFmZS1jMjYyOWQ1MzI3YzIiLCJleHAiOjE2NzU2MzIxODUsImlhdCI6MTY3NTYyODU4NSwiaXNzIjoiYWNtZS5jb20iLCJzdWIiOiJmNGNjNzRlNi04MmJmLTRlMDctYWUyNC05NzUwZWE5MjVkZjQiLCJqdGkiOiIwMThkOGE1OC1mMmJlLTRlMzMtYmZiZC03Nzk2YjMyMjc5ZmIiLCJhdXRoZW50aWNhdGlvblR5cGUiOiJQQVNTV09SRCIsImVtYWlsIjoibmVvcm9iMjJAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF1dGhfdGltZSI6MTY3NTYyODU4NSwidGlkIjoiMDQyNTk2NDEtYTRkNi1hM2M5LThhMzAtZDVjMzFhZWMwNGVmIn0.koSeTFYEP9hOBeuxHlkVNnpJ2Cg7VmpScpdKvsqxPV0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9011/oauth2/userinfo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9011",
+					"path": [
+						"oauth2",
+						"userinfo"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
