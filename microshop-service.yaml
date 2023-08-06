@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: microshop
+spec:
+  type: LoadBalancer
+  selector:
+    app: microshop
+  ports:
+  - name: microshop-product-service
+    port: 5000
+    targetPort: 5000
+  - name: rabbitmq-service
+    port: 5672
+    targetPort: 5672
+  - name: rabbitmq-management
+    port: 15672
+    targetPort: 15672
+  - name: postgres
+    port: 5432
+    targetPort: 5432
+  - name: adminer
+    port: 8080
+    targetPort: 8080
+  - name: fusionauth
+    port: 9011
+    targetPort: 9011
+  - name: fusionauthdash
+    port: 9012
+    targetPort: 9012
+

@@ -1,10 +1,14 @@
 from uuid import uuid4
 from dependency_injector.wiring import Provide, inject
+import requests
 from domain import BaseHandler, BaseRepository, BaseEventBus, ProductCreated, Product, BaseMediator
 from typing import NamedTuple
 from container import Container
 import logging
 from flask import Flask, jsonify, request, Blueprint, Request
+from authlib.oauth2.rfc7662 import IntrospectTokenValidator
+from authlib.integrations.flask_oauth2 import ResourceProtector
+import config
 
 #handlers and mediator
 class CreateProductCommand(NamedTuple):
@@ -115,12 +119,25 @@ def product_serializer(product: Product):
         "category": product.category
     }
 
+#JWT Validator
+class MyJWTValidator(IntrospectTokenValidator):
+    def introspect_token(self, token_string):
+        url = config.ISSUER_BASE_URL + '/oauth2/introspect'
+        data = {'token': token_string, 'token_type_hint': 'access_token'}
+        auth = (config.CLIENT_ID, config.CLIENT_SECRET)
+        resp = requests.post(url, data=data, auth=auth)
+        return resp.json()
+
+authenticate_this = ResourceProtector()
+authenticate_this.register_token_validator(MyJWTValidator())
+
 #product controller/blueprint
 product_controller_blueprint = Blueprint('product_controller', __name__)
 
 logger = logging.getLogger("application")
 
 @product_controller_blueprint.route('/products', methods=['POST'])
+@authenticate_this()
 @inject
 def create_product():
     logger.info("Create product invoked")
@@ -131,6 +148,7 @@ def create_product():
     return jsonify(create_product_serializer(mediator_result))
 
 @product_controller_blueprint.route('/products/<product_id>', methods=['GET'])
+@authenticate_this()
 @inject
 def get_product(product_id: str):
     logger.info("Get product invoked")
@@ -140,7 +158,7 @@ def get_product(product_id: str):
     logger.info("Finished get product")
     return product_serializer(mediator_result)
 
-#flask application
+#flask application with OAuth2 integration
 container = Container()
 app = Flask(__name__)
 app.logger.setLevel(logging.DEBUG)
